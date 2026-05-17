@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Pakar Diagnosis Tifus - Sylveon Edition</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+        :root {
+            --sylveon-pink: #F890A5;
+            --sylveon-light-pink: #FAD3DF;
+            --sylveon-blue: #86D5F2;
+            --sylveon-white: #FFFFFF;
+            --text-dark: #3D4A60;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--sylveon-light-pink) 0%, var(--sylveon-white) 50%, var(--sylveon-blue) 100%);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 35px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(134, 213, 242, 0.3);
+            width: 100%;
+            max-width: 450px;
+            border: 3px solid var(--sylveon-pink);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, var(--sylveon-pink), var(--sylveon-blue));
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--sylveon-pink);
+            margin-top: 10px;
+            border-bottom: 2px dashed var(--sylveon-blue);
+            padding-bottom: 15px;
+            font-size: 22px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .label-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        label {
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 14px;
+        }
+
+        .cf-value {
+            font-weight: 600;
+            color: var(--sylveon-pink);
+            background: var(--sylveon-light-pink);
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+
+        /* Styling Slider */
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background: #eee;
+            outline: none;
+            transition: opacity .2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--sylveon-pink);
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(90deg, var(--sylveon-pink), var(--sylveon-blue));
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-top: 15px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(248, 144, 165, 0.4);
+        }
+
+        .result-box {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #f6fcff;
+            border-left: 6px solid var(--sylveon-blue);
+            border-radius: 15px;
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+            text-align: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-item {
+            margin-bottom: 10px;
+            line-height: 1.6;
+            font-size: 14px;
+            text-align: left;
+        }
+
+        .final-result {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-top: 15px;
+            border-top: 2px dotted var(--sylveon-pink);
+            padding-top: 15px;
+        }
+
+        .percentage {
+            font-size: 28px;
+            color: var(--sylveon-pink);
+            display: block;
+            margin: 10px 0;
+        }
+
+        /* Styling untuk Gambar Hasil */
+        .status-img {
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+            margin: 10px auto;
+            display: block;
+            border-radius: 15px;
+        }
+        
+        .status-text {
+            font-weight: bold;
+            font-size: 18px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🎀 Sistem Pakar Tifus 🎀<br><span style="font-size: 14px; color: #86D5F2;">✨ Sylveon ✨</span></h2>
+    <p class="subtitle">Geser slider untuk menentukan keyakinan gejala</p>
+
+    <div class="form-group">
+        <div class="label-wrapper">
+            <label for="demam">🌡️ Demam Tinggi:</label>
+            <span class="cf-value" id="val_demam">0.9</span>
+        </div>
+        <input type="range" id="demam" min="0" max="1" step="0.1" value="0.9" oninput="updateVal('demam')">
+    </div>
+
+    <div class="form-group">
+        <div class="label-wrapper">
+            <label for="sakit_perut">🤕 Sakit Perut:</label>
+            <span class="cf-value" id="val_sakit_perut">0.6</span>
+        </div>
+        <input type="range" id="sakit_perut" min="0" max="1" step="0.1" value="0.6" oninput="updateVal('sakit_perut')">
+    </div>
+
+    <div class="form-group">
+        <div class="label-wrapper">
+            <label for="lemas">🛌 Lemas:</label>
+            <span class="cf-value" id="val_lemas">0.7</span>
+        </div>
+        <input type="range" id="lemas" min="0" max="1" step="0.1" value="0.7" oninput="updateVal('lemas')">
+    </div>
+
+    <div class="form-group">
+        <div class="label-wrapper">
+            <label for="mual">🤢 Mual:</label>
+            <span class="cf-value" id="val_mual">0.8</span>
+        </div>
+        <input type="range" id="mual" min="0" max="1" step="0.1" value="0.8" oninput="updateVal('mual')">
+    </div>
+
+    <div class="form-group">
+        <div class="label-wrapper">
+            <label for="nafsu_makan">🍽️ Tidak Nafsu Makan:</label>
+            <span class="cf-value" id="val_nafsu_makan">0.6</span>
+        </div>
+        <input type="range" id="nafsu_makan" min="0" max="1" step="0.1" value="0.6" oninput="updateVal('nafsu_makan')">
+    </div>
+
+    <button onclick="hitungDiagnosis()">Hitung Diagnosis 🐾</button>
+
+    <div class="result-box" id="resultArea">
+        <h3>✨ Hasil Perhitungan:</h3>
+        
+        <div id="imageContainer">
+            <img id="statusImage" src="" alt="Status" class="status-img">
+            <div id="statusLabel" class="status-text"></div>
+        </div>
+
+        <div class="final-result" id="hasilAkhir"></div>
+        <hr style="border: 1px dashed var(--sylveon-blue); opacity: 0.3;">
+        
+        <div class="result-item" id="hasilAturan1"></div>
+        <div class="result-item" id="hasilAturan2"></div>
+    </div>
+</div>
+
+<script>
+    // Fungsi untuk memperbarui teks angka di sebelah label saat slider digeser
+    function updateVal(id) {
+        let val = document.getElementById(id).value;
+        document.getElementById('val_' + id).innerText = val;
+    }
+
+    function hitungDiagnosis() {
+        let cfDemam = parseFloat(document.getElementById('demam').value);
+        let cfSakitPerut = parseFloat(document.getElementById('sakit_perut').value);
+        let cfLemas = parseFloat(document.getElementById('lemas').value);
+        let cfMual = parseFloat(document.getElementById('mual').value);
+        let cfNafsuMakan = parseFloat(document.getElementById('nafsu_makan').value);
+
+        const cfPakarAturan1 = 0.8;
+        const cfPakarAturan2 = 0.7;
+
+        let minEvidence1 = Math.min(cfDemam, cfSakitPerut);
+        let cf1 = minEvidence1 * cfPakarAturan1;
+
+        let minEvidence2 = Math.min(cfLemas, cfMual, cfNafsuMakan);
+        let cf2 = minEvidence2 * cfPakarAturan2;
+
+        let cfCombine = cf1 + cf2 - (cf1 * cf2);
+        let persentase = (cfCombine * 100).toFixed(2);
+
+        // LOGIKA GAMBAR & STATUS
+        let imgTag = document.getElementById('statusImage');
+        let labelTag = document.getElementById('statusLabel');
+
+        if (persentase >= 80) {
+            // Jika >= 80% (Terdeteksi Tifus)
+            // Ganti URL gambar di bawah dengan link gambar "Sakit/Tifus" kamu
+            imgTag.src = "sakit.jpg"; 
+            labelTag.innerText = "Terdeteksi Tifus 🤒";
+            labelTag.style.color = "#e74c3c";
+        } else {
+            // Jika < 80% (Tidak Terdeteksi Tifus)
+            // Ganti URL gambar di bawah dengan link gambar "Sehat" kamu
+            imgTag.src = "sehat.jpg";
+            labelTag.innerText = "Tidak Terkena Tifus ✨";
+            labelTag.style.color = "#2ecc71";
+        }
+
+        // Menampilkan hasil teks
+        document.getElementById('hasilAturan1').innerHTML = 
+            `<b>Aturan 1:</b> Min(${cfDemam}, ${cfSakitPerut}) * 0.8 = <b>${cf1.toFixed(2)}</b>`;
+        
+        document.getElementById('hasilAturan2').innerHTML = 
+            `<b>Aturan 2:</b> Min(${cfLemas}, ${cfMual}, ${cfNafsuMakan}) * 0.7 = <b>${cf2.toFixed(2)}</b>`;
+        
+        document.getElementById('hasilAkhir').innerHTML = 
+            `CF Akhir Diagnosis Tifus:<br>
+            <span class="percentage">${persentase}%</span>
+            <small>${cf1.toFixed(2)} + ${cf2.toFixed(2)} - (${cf1.toFixed(2)} * ${cf2.toFixed(2)}) = ${cfCombine.toFixed(4)}</small>`;
+
+        document.getElementById('resultArea').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
